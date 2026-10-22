@@ -12,6 +12,11 @@ engine = create_engine(
 SessionLocal = sessionmaker(bind=engine)
 
 
+def get_session():
+    with SessionLocal() as session:
+        yield session
+
+
 class Base(DeclarativeBase):
     pass
 
