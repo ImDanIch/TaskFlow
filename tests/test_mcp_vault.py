@@ -12,17 +12,21 @@ def vault(tmp_path):
     return Vault(root)
 
 
-def test_create_read_update(vault):
-    assert vault.ingest_note("Concepts/API.md", "# API\nУкраїнська") == "Concepts/API.md"
+def test_create_read_update(git_vault):
+    vault, _ = git_vault
+    result = vault.ingest_note("Concepts/API.md", "# API\nУкраїнська")
+    assert result["status"] == "created"
+    assert result["note_path"] == "Concepts/API.md"
     assert vault.get_note("Concepts/API.md") == "# API\nУкраїнська"
-    vault.ingest_note("Concepts/API.md", "Updated")
+    assert vault.ingest_note("Concepts/API.md", "Updated")["status"] == "updated"
     assert vault.get_note("Concepts/API.md") == "Updated"
 
 
 def test_search(vault):
-    vault.ingest_note("API.md", "Other")
-    vault.ingest_note("Nested/Note.md", "Learn api")
-    vault.ingest_note("Unrelated.md", "Other")
+    (vault.root / "API.md").write_text("Other", encoding="utf-8")
+    (vault.root / "Nested").mkdir()
+    (vault.root / "Nested/Note.md").write_text("Learn api", encoding="utf-8")
+    (vault.root / "Unrelated.md").write_text("Other", encoding="utf-8")
     for excluded in (".git", ".obsidian"):
         folder = vault.root / excluded
         folder.mkdir()

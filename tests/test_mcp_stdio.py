@@ -7,13 +7,14 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
 
-def test_stdio_tools(tmp_path):
+def test_stdio_tools(git_vault):
+    vault, _ = git_vault
     async def scenario():
         params = StdioServerParameters(
             command=sys.executable,
             args=["-m", "mcp_server.server"],
             cwd=str(Path(__file__).resolve().parents[1]),
-            env={**os.environ, "TASKFLOW_KB_PATH": str(tmp_path)},
+            env={**os.environ, "TASKFLOW_KB_PATH": str(vault.root)},
         )
         async with stdio_client(params) as (read, write):
             async with ClientSession(read, write) as session:
@@ -27,6 +28,8 @@ def test_stdio_tools(tmp_path):
                         "note_path": "Test.md", "content": content,
                     })
                     assert not result.isError
+                    assert result.structuredContent["status"] in {"created", "updated"}
+                    assert len(result.structuredContent["commit_hash"]) == 40
                     result = await session.call_tool("get_note", {"note_path": "Test.md"})
                     assert not result.isError
                     assert result.content[0].text == content
@@ -42,6 +45,6 @@ def test_stdio_tools(tmp_path):
                     assert result.isError
 
     async def timed():
-        await asyncio.wait_for(scenario(), timeout=30)
+        await asyncio.wait_for(scenario(), timeout=60)
 
     asyncio.run(timed())

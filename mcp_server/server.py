@@ -26,8 +26,8 @@ def create_server(vault_path: Path) -> FastMCP:
         return vault.search_notes(query)
 
     @server.tool(annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True))
-    def ingest_note(note_path: str, content: str) -> str:
-        """Create or fully replace a UTF-8 Markdown note; return its relative path."""
+    def ingest_note(note_path: str, content: str) -> dict[str, str]:
+        """Pull, write, commit only this note, and push; return status and commit hash."""
         return vault.ingest_note(note_path, content)
 
     return server

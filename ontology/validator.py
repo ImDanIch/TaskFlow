@@ -73,9 +73,10 @@ def validate_vault(root: Path) -> Report:
         raise ValueError("Vault must be a directory")
     report = Report()
     notes = {}
-    # Path.walk permits pruning metadata folders without traversing them.
+    # Templates are reusable scaffolding, not knowledge-base entities.
+    # Prune excluded folders before reading any of their contents.
     for directory, dirs, files in root.walk(follow_symlinks=False):
-        dirs[:] = sorted(d for d in dirs if d.casefold() not in {".git", ".obsidian"}
+        dirs[:] = sorted(d for d in dirs if d.casefold() not in {".git", ".obsidian", "templates"}
                          and not (directory / d).is_symlink()
                          and not (directory / d).is_junction())
         for filename in sorted(files):

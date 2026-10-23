@@ -38,6 +38,33 @@ def test_typed_relationships(tmp_path, kind):
     assert report.relationships == [{"source": "Decision.md", "type": kind, "target": "DB.md"}]
 
 
+@pytest.mark.parametrize("folder", ["Templates", "templates"])
+def test_templates_excluded_from_discovery(tmp_path, folder):
+    note(tmp_path, "Components/DB.md", "---\ntype: component\n---")
+    # A duplicate title must not make content references ambiguous; invalid
+    # nested templates must not generate errors or outgoing relationships.
+    note(tmp_path, f"{folder}/DB.md", "---\ntype: component\n---\n[[Missing]]")
+    note(tmp_path, f"{folder}/Nested/Invalid.md", "---\ntype: invalid\n---")
+    note(tmp_path, "API.md", "---\ntype: concept\n---\n[[DB]]")
+    report = validate_vault(tmp_path)
+    assert report.errors == []
+    assert report.warnings == []
+    assert report.entities == {"API.md": "concept", "Components/DB.md": "component"}
+    assert report.relationships == [
+        {"source": "API.md", "type": "related_to", "target": "Components/DB.md"},
+    ]
+
+
+def test_typed_relationship_cannot_target_template(tmp_path):
+    note(tmp_path, "Templates/DB.md", "---\ntype: component\n---")
+    note(tmp_path, "API.md", '---\ntype: concept\nrelationships:\n  - type: uses\n    target: Templates/DB.md\n---')
+    report = validate_vault(tmp_path)
+    assert report.entities == {"API.md": "concept"}
+    assert report.relationships == []
+    assert len(report.errors) == 1
+    assert "Missing or invalid entity" in report.errors[0]
+
+
 @pytest.mark.parametrize("kind", ["concept", "component", "decision", "glossary"])
 def test_entity_types(tmp_path, kind):
     note(tmp_path, "Note.md", f"---\ntype: {kind}\n---")

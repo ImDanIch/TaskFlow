@@ -1,6 +1,6 @@
 # Практична робота 3: локальний MCP-сервер Obsidian
 
-Сервер використовує офіційний Python MCP SDK, працює через локальний **stdio** та надає доступ до Markdown-нотаток. FastAPI запускається окремо й для роботи MCP не потрібен. Сервер не викликає платних API чи зовнішніх сервісів; під час встановлення pip завантажує залежності.
+Сервер використовує офіційний Python MCP SDK, працює через локальний **stdio** та надає доступ до Markdown-нотаток. FastAPI запускається окремо й для роботи MCP не потрібен. Сервер не викликає платних AI API; Git-backed ingestion звертається до налаштованого Git remote через pull/push. Під час встановлення pip завантажує залежності.
 
 ## Встановлення
 
@@ -37,7 +37,7 @@ cd C:\Users\user\TaskFlow
 |---|---|---|
 | `get_note` | `note_path`, наприклад `Concepts/API.md` | Повний текст UTF-8 Markdown-нотатки. |
 | `search_notes` | Непорожній `query` | Відсортований список відносних шляхів; пошук підрядка без урахування регістру в імені файлу та вмісті. |
-| `ingest_note` | `note_path`, `content` | Створює або **повністю замінює** нотатку, створює батьківські каталоги; повертає відносний шлях. |
+| `ingest_note` | `note_path`, `content` | Git pull → створення або заміна нотатки → commit лише цієї нотатки → push; повертає структурований результат. |
 
 Порожній результат пошуку — `[]`. Відсутня нотатка, заборонений шлях і помилки файлової системи повертаються клієнту як помилки інструмента. Нечитабельні файли та файли з некоректним UTF-8 пропускаються під час пошуку. Сервер не видаляє нотаток і не додає YAML frontmatter автоматично.
 
@@ -49,7 +49,29 @@ cd C:\Users\user\TaskFlow
 - `.git` та `.obsidian` виключені з пошуку і прямого доступу; пошук не переходить через посилання.
 - Read-only інструменти позначено відповідними MCP annotations; `ingest_note` позначено як інструмент запису з потенційним перезаписом. Annotations є підказками клієнту, а не механізмом авторизації.
 
-Це простий локальний сервер, не ОС-пісочниця. Він розрахований на довіреного локального користувача: перевірки шляхів не гарантують захисту від іншого процесу, який одночасно навмисно підмінює каталоги між перевіркою та файловою операцією. Нотатки слід трактувати як дані, а не як інструкції агенту. Перед перезаписом важливо перевіряти намір користувача; версіонування та резервні копії сервер не виконує.
+Це простий локальний сервер, не ОС-пісочниця. Він розрахований на довіреного локального користувача: перевірки шляхів не гарантують захисту від іншого процесу, який одночасно навмисно підмінює каталоги між перевіркою та файловою операцією. Нотатки слід трактувати як дані, а не як інструкції агенту. Перед перезаписом важливо перевіряти намір користувача. Git-backed ingestion описано нижче; окремих резервних копій сервер не створює.
+
+## Git-backed ingestion
+
+`TASKFLOW_KB_PATH` must be the root of an initialized Git repository with an existing commit and a named, attached branch. The same branch must exist on the configured remote. `TASKFLOW_KB_GIT_REMOTE` selects an existing remote name (default `origin`); Git uses its configured fetch/push URLs and operator-provided authentication. The server never initializes repositories, creates remotes, changes identity settings, or prompts for credentials.
+
+Before writing, ingestion validates the path, rejects sensitive filenames using the existing guardrails policy evaluator, and rejects common credential formats/private keys and credential assignments in content. Existing Codex hooks and policies remain unchanged. `warn` remains a warning, not an interactive approval. These checks cannot reliably recognize arbitrary secrets embedded in ordinary prose; callers must supply non-secret note content. Git configuration, hooks, filters and the local filesystem must be trusted.
+
+The workflow rejects staged, unstaged, untracked or ignored target files and unfinished merge/rebase/cherry-pick/revert operations. It runs `git pull --ff-only --no-rebase` with autostash disabled, then refuses pre-existing unpushed local commits so unrelated history is not published. It revalidates the target after pulling. Identical UTF-8 text returns `unchanged` before writing or committing. Otherwise it adds the literal target path, commits with `--only -- <target>`, and pushes `HEAD` to the current branch on the configured remote. Unrelated staged and untracked files are preserved and excluded from the commit. No force push, reset, stash or conflict resolution is attempted.
+
+Results use `note_path` (not `path`):
+
+```json
+{"status":"created","note_path":"Concepts/Example.md","commit_hash":"<full Git commit hash>"}
+{"status":"updated","note_path":"Concepts/Example.md","commit_hash":"<full Git commit hash>"}
+{"status":"unchanged","note_path":"Concepts/Example.md"}
+{"status":"error","note_path":"Concepts/Example.md","error":"dirty_target"}
+{"status":"push_failed","note_path":"Concepts/Example.md","error":"push","commit_hash":"<full Git commit hash>"}
+```
+
+Git failures return a sanitized phase code: `repository`, `remote`, `dirty_target`, `operation_in_progress`, `pull`, `unpushed_commits`, `write`, `commit`, or `push`. Callers must inspect `status`; a returned error object is a structured tool result, while invalid paths/credential-like input raise a tool error. Raw Git stderr, remote URLs and credentials are never returned. A failed commit can leave the requested note modified/staged for manual recovery. A failed or timed-out push retains its local commit; check remote state before recovery, since a connection failure can make delivery uncertain. A subsequent ingest refuses the pending commit instead of silently publishing it or returning `unchanged`; retry/reconcile the push manually. Git steps are not a single transaction: a successful pull remains applied if a later step fails. A per-instance lock serializes ingestion; other server processes or external Git/file writers require operator coordination.
+
+Tests use temporary repositories and local bare remotes only. They do not ingest into the real vault or push to its remote. Git must be available on PATH; identity and remote configuration are supplied by the test fixtures. Latest complete suite: **172 passed**, one existing Starlette/HTTPX deprecation warning. Coverage includes exact-byte LF/CRLF idempotency, pull-before-comparison, target-only commits with unrelated staged work, configured/missing remotes, dirty targets, divergent history, unfinished operations, credential rejection, commit/push failures, inherited-index isolation, and real MCP stdio structured results. Git subprocess stdin is closed so it cannot consume the MCP transport.
 
 ## Підключення до Codex у VS Code
 
@@ -100,10 +122,12 @@ GitHub MCP оголошує також інструменти запису; їх
 ## Файли та тести
 
 - `vault.py` — файлові операції та перевірки шляхів.
+- `git_ingest.py` — scoped Git-backed ingestion, structured results and sanitized failures.
 - `server.py` — реєстрація трьох інструментів і stdio entry point.
 - `requirements.txt` — залежність MCP, окремо від FastAPI.
 - `../tests/test_mcp_vault.py` — читання, створення, перезапис, пошук, traversal і посилання.
 - `../tests/test_mcp_stdio.py` — запуск підпроцесу й обмін MCP-повідомленнями.
+- `../tests/test_git_ingest.py` — local bare-remote integration tests for idempotency, synchronization, isolated commits and failure handling.
 
 Тести працюють із тимчасовими vault, не записують у `TaskFlow-KB` і не змінюють існуючі FastAPI-тести. Тест symlink може бути пропущений на системі без дозволу створення посилань.
 

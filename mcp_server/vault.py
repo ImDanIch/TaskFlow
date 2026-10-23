@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+from mcp_server.git_ingest import GitIngestor
+
 
 EXCLUDED = {".git", ".obsidian"}
 
@@ -10,6 +12,7 @@ class Vault:
         self.root = root.resolve(strict=True)
         if not self.root.is_dir():
             raise ValueError("Vault must be an existing directory")
+        self.ingestor = GitIngestor(self)
 
     def note_path(self, note_path: str) -> Path:
         # Accept either separator, but never absolute, drive, ADS or parent paths.
@@ -37,13 +40,8 @@ class Vault:
     def get_note(self, note_path: str) -> str:
         return self.note_path(note_path).read_text(encoding="utf-8")
 
-    def ingest_note(self, note_path: str, content: str) -> str:
-        target = self.note_path(note_path)
-        target.parent.mkdir(parents=True, exist_ok=True)
-        # Revalidate after creating parent directories.
-        target = self.note_path(note_path)
-        target.write_text(content, encoding="utf-8")
-        return target.relative_to(self.root).as_posix()
+    def ingest_note(self, note_path: str, content: str) -> dict:
+        return self.ingestor.ingest(note_path, content)
 
     def search_notes(self, query: str) -> list[str]:
         if not query.strip():
