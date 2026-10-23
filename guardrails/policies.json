@@ -1,0 +1,17 @@
+{
+  "sensitive_names": [".env*", "*credential*", "*secret*", "*token*", "id_rsa*", "id_ed25519*", "*.pem", "*.key", ".ssh", ".aws"],
+  "excluded_directories": [".git", ".obsidian"],
+  "rules": [
+    {"id": "invalid_path", "condition": "invalid_path", "decision": "block", "reason": "Invalid or ambiguous path."},
+    {"id": "outside_vault", "condition": "outside_vault", "decision": "block", "reason": "Access outside the configured vault is forbidden."},
+    {"id": "sensitive_path", "condition": "sensitive_path", "decision": "block", "reason": "Credential, secret and environment files are forbidden."},
+    {"id": "delete_note", "condition": "delete", "decision": "block", "reason": "Deleting knowledge-base notes is forbidden."},
+    {"id": "metadata", "condition": "metadata", "decision": "block", "reason": "Vault metadata directories are forbidden."},
+    {"id": "unsafe_link", "condition": "unsafe_link", "decision": "block", "reason": "Links and hard-linked files are forbidden."},
+    {"id": "markdown_only", "condition": "not_markdown", "decision": "block", "reason": "Only Markdown notes are supported."},
+    {"id": "read_note", "condition": "read", "decision": "allow", "reason": "Reading a vault Markdown note is allowed."},
+    {"id": "update_note", "condition": "existing_write", "decision": "warn", "reason": "This operation will replace an existing knowledge-base note."},
+    {"id": "create_note", "condition": "write", "decision": "allow", "reason": "Creating a new vault Markdown note is allowed."},
+    {"id": "default_deny", "condition": "always", "decision": "block", "reason": "Unsupported operation."}
+  ]
+}
