@@ -7,7 +7,7 @@ import sys
 import pytest
 
 from guardrails.codex_hook import evaluate_hook
-from guardrails.policy import PolicyEvaluator
+from guardrails.policy import CodePolicyEvaluator, PolicyEvaluator
 
 
 @pytest.fixture
@@ -160,3 +160,70 @@ def test_hook_config():
     hook = config["hooks"]["PreToolUse"][0]
     assert hook["matcher"] == "^mcp__taskflow_kb__.*$"
     assert "codex_hook.py" in hook["hooks"][0]["command"]
+
+
+@pytest.mark.parametrize("operation,path,expected", [
+    ("read", "app/main.py", "allow"),
+    ("read", "README.md", "allow"),
+    ("write", "tests/test_new.py", "allow"),
+    ("write", "app/main.py", "warn"),
+    ("write", "README.md", "warn"),
+    ("write", "tests/test_existing.py", "warn"),
+    ("delete", "app/main.py", "block"),
+    ("read", "../outside.py", "block"),
+    ("read", ".env", "block"),
+    ("write", ".git/config", "block"),
+    ("write", ".codex/hooks.json", "block"),
+    ("write", "taskflow.db", "block"),
+    ("execute", "app/main.py", "block"),
+])
+def test_code_policy_matrix(tmp_path, operation, path, expected):
+    for name in ("app/main.py", "README.md", "tests/test_existing.py"):
+        target = tmp_path / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text("Original", encoding="utf-8")
+    before = {p.relative_to(tmp_path): p.read_bytes()
+              for p in tmp_path.rglob("*") if p.is_file()}
+    assert CodePolicyEvaluator(tmp_path).evaluate(operation, path).decision == expected
+    assert before == {p.relative_to(tmp_path): p.read_bytes()
+                      for p in tmp_path.rglob("*") if p.is_file()}
+
+
+@pytest.mark.parametrize("tool,path,expected", [
+    ("get_note", "Existing.md", "allow"),
+    ("ingest_note", "New.md", "allow"),
+    ("get_note", "Nested/Existing.md", "allow"),
+    ("ingest_note", "Existing.md", "warn"),
+    ("ingest_note", "Nested/Existing.md", "warn"),
+    ("ingest_note", "Decision.md", "warn"),
+    ("get_note", "../outside.md", "block"),
+    ("get_note", ".env", "block"),
+    ("ingest_note", ".git/Note.md", "block"),
+])
+def test_hook_nine_scenarios(evaluator, tool, path, expected):
+    for name in ("Nested/Existing.md", "Decision.md"):
+        target = evaluator.vault / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text("Original", encoding="utf-8")
+    before = {p.relative_to(evaluator.vault): p.read_bytes()
+              for p in evaluator.vault.rglob("*.md")}
+    result = subprocess.run(
+        [sys.executable, "-m", "guardrails.codex_hook"],
+        input=json.dumps({
+            "hook_event_name": "PreToolUse",
+            "tool_name": f"mcp__taskflow_kb__{tool}",
+            "tool_input": {"note_path": path},
+        }), text=True, capture_output=True, timeout=10,
+        env={**os.environ, "TASKFLOW_KB_PATH": str(evaluator.vault)},
+    )
+    assert result.returncode == 0
+    output = json.loads(result.stdout)["hookSpecificOutput"]
+    if expected == "block":
+        assert output["permissionDecision"] == "deny"
+    elif expected == "warn":
+        assert "WARNING" in output["additionalContext"]
+        assert "permissionDecision" not in output
+    else:
+        assert output == {"hookEventName": "PreToolUse"}
+    assert before == {p.relative_to(evaluator.vault): p.read_bytes()
+                      for p in evaluator.vault.rglob("*.md")}

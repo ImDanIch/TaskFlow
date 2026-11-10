@@ -1,0 +1,18 @@
+{
+  "allowed_suffixes": [".py", ".md", ".json", ".toml", ".txt", ".yaml", ".yml"],
+  "sensitive_names": [".env*", "*credential*", "*secret*", "*token*", "id_rsa*", "id_ed25519*", "*.pem", "*.key", ".ssh", ".aws"],
+  "excluded_directories": [".git", ".venv", "venv", ".codex", ".agents", "__pycache__"],
+  "rules": [
+    {"id": "invalid_path", "condition": "invalid_path", "decision": "block", "reason": "Invalid or ambiguous project path."},
+    {"id": "outside_project", "condition": "outside_vault", "decision": "block", "reason": "Access outside the configured project is forbidden."},
+    {"id": "sensitive_path", "condition": "sensitive_path", "decision": "block", "reason": "Credential, secret and environment files are forbidden."},
+    {"id": "delete_source", "condition": "delete", "decision": "block", "reason": "Deleting project files is forbidden."},
+    {"id": "protected_directory", "condition": "metadata", "decision": "block", "reason": "Git, agent configuration and environment directories are protected."},
+    {"id": "unsafe_link", "condition": "unsafe_link", "decision": "block", "reason": "Links and hard-linked files are forbidden."},
+    {"id": "source_only", "condition": "not_markdown", "decision": "block", "reason": "Only configured source and documentation formats are supported; databases and binaries are forbidden."},
+    {"id": "read_source", "condition": "read", "decision": "allow", "reason": "Reading project source is allowed."},
+    {"id": "update_source", "condition": "existing_write", "decision": "warn", "reason": "Changing an existing project file requires diff review and relevant tests."},
+    {"id": "create_source", "condition": "write", "decision": "allow", "reason": "Creating a source file inside the project is allowed."},
+    {"id": "default_deny", "condition": "always", "decision": "block", "reason": "Unsupported operation."}
+  ]
+}

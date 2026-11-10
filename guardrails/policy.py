@@ -87,7 +87,9 @@ class PolicyEvaluator:
             "delete": operation == "delete",
             "metadata": metadata,
             "unsafe_link": unsafe_link,
-            "not_markdown": target.suffix.casefold() != ".md" or target.is_dir(),
+            "not_markdown": target.suffix.casefold() not in self.policy.get(
+                "allowed_suffixes", [".md"]
+            ) or target.is_dir(),
             "read": operation == "read",
             "existing_write": operation == "write" and target.exists(),
             "write": operation == "write",
@@ -97,3 +99,14 @@ class PolicyEvaluator:
             if context[rule["condition"]]:
                 return Decision(rule["decision"], rule["id"], rule["reason"])
         return Decision("block", "default_deny", "No matching policy rule.")
+
+
+class CodePolicyEvaluator(PolicyEvaluator):
+    """Apply the same path checks to source files inside a project root.
+
+    Like PolicyEvaluator, this is a decision engine, not a shell interceptor.
+    The caller must enforce block before performing a file operation.
+    """
+
+    def __init__(self, project: Path):
+        super().__init__(project, POLICY_PATH.with_name("code_policies.json"))
