@@ -26,10 +26,17 @@ def evaluate_hook(payload: dict, evaluator: PolicyEvaluator) -> dict:
         "mcp__taskflow_kb__get_note": "read",
         "mcp__taskflow_kb__ingest_note": "write",
     }.get(tool)
-    if operation is None:
+    if tool == "mcp__taskflow_kb__search_notes":
+        query = arguments.get("query")
+        if isinstance(query, str) and query.strip():
+            # PR7 server applies PolicyEvaluator before every indexed read and
+            # before returning results; the hook validates only the query.
+            return {"hookSpecificOutput": {"hookEventName": "PreToolUse"}}
+        result = Decision("block", "invalid_query", "A nonempty search query is required.")
+    elif operation is None:
         # Bulk search could expose sensitive note contents even for an innocent
         # query. Its result cannot be filtered by a pre-execution path policy.
-        result = Decision("block", "unsupported_tool", "This hook supports path-based get_note and ingest_note only; bulk search is blocked.")
+        result = Decision("block", "unsupported_tool", "Unsupported knowledge-base tool.")
     else:
         result = evaluator.evaluate(operation, arguments.get("note_path"))
     output = {"hookEventName": "PreToolUse"}

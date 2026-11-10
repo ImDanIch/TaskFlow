@@ -1,2 +1,3 @@
 # Official SDK v1 API used by this server; no CLI extras needed.
 mcp==1.30.0
+sentence-transformers>=3,<6

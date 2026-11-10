@@ -1,0 +1,101 @@
+{
+  "mode": "before",
+  "transport": "fresh MCP SDK stdio",
+  "schema": {
+    "properties": {
+      "query": {
+        "title": "Query",
+        "type": "string"
+      }
+    },
+    "required": [
+      "query"
+    ],
+    "title": "search_notesArguments",
+    "type": "object"
+  },
+  "results": [
+    {
+      "query": "Який вебфреймворк обробляє HTTP-запити?",
+      "gold": "Components/FastAPI.md",
+      "paths": [],
+      "rank": null,
+      "seconds": 0.03506090000155382,
+      "sources": {}
+    },
+    {
+      "query": "Як перевіряються вхідні дані?",
+      "gold": "Components/Pydantic.md",
+      "paths": [],
+      "rank": null,
+      "seconds": 0.03142680000019027,
+      "sources": {}
+    },
+    {
+      "query": "Чому обрано файлову базу даних?",
+      "gold": "Decisions/Database Design.md",
+      "paths": [],
+      "rank": null,
+      "seconds": 0.029564500000560656,
+      "sources": {}
+    },
+    {
+      "query": "Як Python працює з таблицями через ORM?",
+      "gold": "Components/SQLAlchemy.md",
+      "paths": [],
+      "rank": null,
+      "seconds": 0.02863190000061877,
+      "sources": {}
+    },
+    {
+      "query": "Де зберігаються завдання без окремого сервера?",
+      "gold": "Components/SQLite.md",
+      "paths": [],
+      "rank": null,
+      "seconds": 0.028098400005546864,
+      "sources": {}
+    },
+    {
+      "query": "Як компоненти застосунку взаємодіють між собою?",
+      "gold": "Concepts/TaskFlow Architecture.md",
+      "paths": [],
+      "rank": null,
+      "seconds": 0.02684169999702135,
+      "sources": {}
+    },
+    {
+      "query": "Які операції доступні через REST?",
+      "gold": "Concepts/REST API.md",
+      "paths": [],
+      "rank": null,
+      "seconds": 0.02991660000407137,
+      "sources": {}
+    },
+    {
+      "query": "Що означають створення читання зміна видалення?",
+      "gold": "Glossary/CRUD.md",
+      "paths": [],
+      "rank": null,
+      "seconds": 0.028751400001056027,
+      "sources": {}
+    },
+    {
+      "query": "Як обробляти некоректний запит?",
+      "gold": "Decisions/ADR-001-request-validation.md",
+      "paths": [],
+      "rank": null,
+      "seconds": 0.02746359999582637,
+      "sources": {}
+    },
+    {
+      "query": "Як перевірено запис нотаток через Git?",
+      "gold": "Concepts/Git Ingestion Verification.md",
+      "paths": [],
+      "rank": null,
+      "seconds": 0.028082400000130292,
+      "sources": {}
+    }
+  ],
+  "hit_at_5": 0.0,
+  "mrr_at_5": 0.0
+}

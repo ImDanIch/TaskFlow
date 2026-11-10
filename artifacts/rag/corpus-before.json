@@ -1,0 +1,23 @@
+{
+  "README.md": "217bcbb71575144cc5c980deb0caaf66f7c11ebe6ea4b6d573933b09bb9a931a",
+  "TaskFlow MOC.md": "c5f0116c57afbdf42130cd5834499fe3ef12700e0b373b1aa3ce02f714fec82c",
+  "Components/FastAPI.md": "0591d9627f8c0a97c1ee637c7877f99578cd6275649580568cb66013751ce55e",
+  "Components/Pydantic.md": "f179f615329fd9663d5e1dea6bd8187fc995595d54a0bb7ed4737ae358995fab",
+  "Components/SQLAlchemy.md": "c1def2fac31ab2f259acd6a4bf10c6a45b1abf290dbbe104824047a960cb325e",
+  "Components/SQLite.md": "f702e251c499bacca8928baa55ed3fd0d28186eb2f2e1e1f2cde347becc33eb7",
+  "Concepts/Git Ingestion Verification.md": "d135db558267cfd53d7a6d566a26565026ad8a8b11cf142d278e8f423ca22baa",
+  "Concepts/MCP Integration Test.md": "658aeece1dc6b9f7509231483865de06ac48b2944f66200cc7be3f4ec05506cd",
+  "Concepts/PR3 Ingestion Test.md": "128644dd12f034f4e9aac5a930188eb892787cb64647255708eb61f73e7f3244",
+  "Concepts/REST API.md": "41b3b8259246bd5b139effd2568ea82b904d407281830e2d754fa2dbf8b4b537",
+  "Concepts/TaskFlow Architecture.md": "acd6e09e6a031da5a8aec92af280ade0fa191767ce456340c42359708f3336e5",
+  "Decisions/ADR-001-request-validation.md": "66b46d5edaed5ffb7ec455db327424e6b08ba0cee2218a391f5fac253aa0f9c5",
+  "Decisions/Database Design.md": "b5a3e99bee4c16aa40576a385c80d1a65a01e380cceb44b1092bc85c33e0ed67",
+  "Decisions/TaskFlow Commit 0fae716a59f9db4f1d647b29235ba5a6777ee013.md": "c7f3f4a28265bc2a3ecc3081789cb578346003ef034f29e23b648d277360d861",
+  "Decisions/TaskFlow Commit 41e55c2f282589696629896b0c125d7917d991af.md": "85ab7051d285d50c0da98760036f696248f8872d0e87067396b5082c179cd2a9",
+  "Decisions/TaskFlow Commit 48a0c766b8bf3ed3e306cef2b211de57f8d09601.md": "ec3b22a92a2babb90caab50a818c56e29e3723cc67864d1e22e60425d6900a62",
+  "Glossary/CRUD.md": "89179e651335dd38e1bf8b071bee2a5f89072088f55646e011ece9b475b653f8",
+  "Templates/Component Template.md": "143064ea7d6423ba9d0ad9adedcce40c2f786c05f9843348ca51452fb08317bb",
+  "Templates/Concept Template.md": "eed0610724c6d2405b5e9c3aa68c082e82419432c9d5695023475bf09d055949",
+  "Templates/Decision Template.md": "1e30ad5fe04cc22c84115fe79941eb99dd506734b6ecfd9a855c8a6ac669f572",
+  "Templates/Glossary Template.md": "e58779161592d7005ac43b2e283ecc56778dc8b556df3c941155765898b12288"
+}

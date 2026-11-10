@@ -33,6 +33,7 @@ def test_stdio_tools(git_vault):
                     result = await session.call_tool("get_note", {"note_path": "Test.md"})
                     assert not result.isError
                     assert result.content[0].text == content
+                vault.rag.build_index()
                 result = await session.call_tool("search_notes", {"query": "updated"})
                 assert not result.isError
                 assert "Test.md" in str(result.content)
@@ -45,6 +46,6 @@ def test_stdio_tools(git_vault):
                     assert result.isError
 
     async def timed():
-        await asyncio.wait_for(scenario(), timeout=60)
+        await asyncio.wait_for(scenario(), timeout=120)
 
     asyncio.run(timed())

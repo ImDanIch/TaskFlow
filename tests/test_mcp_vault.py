@@ -32,8 +32,8 @@ def test_search(vault):
         folder.mkdir()
         (folder / "API.md").write_text("api", encoding="utf-8")
     (vault.root / "API.txt").write_text("api", encoding="utf-8")
-    assert vault.search_notes("ApI") == ["API.md", "Nested/Note.md"]
-    assert vault.search_notes("missing") == []
+    assert vault.lexical_search_notes("ApI") == ["API.md", "Nested/Note.md"]
+    assert vault.lexical_search_notes("missing") == []
     with pytest.raises(ValueError):
         vault.search_notes(" ")
 
@@ -70,6 +70,7 @@ def test_symlink_escape(vault, tmp_path):
         vault.get_note("linked/note.md")
     with pytest.raises(ValueError):
         vault.ingest_note("linked/note.md", "overwrite")
+    vault.rag.build_index()
     assert vault.search_notes("secret") == []
     assert note.read_text(encoding="utf-8") == "secret"
 
@@ -82,5 +83,6 @@ def test_hardlink_escape(vault, tmp_path):
         vault.ingest_note("linked.md", "overwrite")
     with pytest.raises(ValueError):
         vault.get_note("linked.md")
+    vault.rag.build_index()
     assert vault.search_notes("secret") == []
     assert outside.read_text(encoding="utf-8") == "secret"

@@ -1,0 +1,221 @@
+{
+  "mode": "after",
+  "transport": "fresh MCP SDK stdio",
+  "schema": {
+    "properties": {
+      "query": {
+        "title": "Query",
+        "type": "string"
+      }
+    },
+    "required": [
+      "query"
+    ],
+    "title": "search_notesArguments",
+    "type": "object"
+  },
+  "results": [
+    {
+      "query": "Який вебфреймворк обробляє HTTP-запити?",
+      "gold": "Components/FastAPI.md",
+      "paths": [
+        "Components/FastAPI.md",
+        "Concepts/TaskFlow Architecture.md",
+        "Concepts/REST API.md",
+        "Decisions/Database Design.md",
+        "Components/Pydantic.md"
+      ],
+      "rank": 1,
+      "seconds": 4.204745399998501,
+      "sources": {
+        "Components/FastAPI.md": "---\ntype: component\ntags:\n  - backend\n  - api\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/Pydantic.md\n---\n\n# FastAPI\n\nFastAPI — Python-фреймворк для створення веб-API.\n\nУ TaskFlow використовується для реалізації HTTP-маршрутів і автоматичної документації Swagger.\n\n## Реалізація в TaskFlow\n\n- app/main.py — створення застосунку та підключення маршрутів.\n- app/tasks.py — операції CRUD.\n- app/schemas.py — Pydantic-схеми запитів і відповідей.\n\n## Зв'язки\n\n- [[REST API]]\n- [[TaskFlow Architecture]]",
+        "Concepts/TaskFlow Architecture.md": "---\ntype: concept\ntags:\n  - architecture\n  - taskflow\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/FastAPI.md\n  - type: uses\n    target: Components/Pydantic.md\n  - type: uses\n    target: Components/SQLAlchemy.md\n  - type: uses\n    target: Components/SQLite.md\n  - type: implements\n    target: Concepts/REST API.md\n---\n\n# TaskFlow Architecture\n\nTaskFlow — навчальний застосунок для керування завданнями, побудований за принципами REST API.\n\n## Основні компоненти\n\n- FastAPI — обробка HTTP-запитів.\n- Pydantic — валідація даних.\n- SQLAlchemy — робота з базою даних.\n- SQLite — збереження завдань.\n- pytest — автоматизоване тестування.\n\n## Потік обробки запиту\n\nHTTP-запит → FastAPI → Pydantic → SQLAlchemy → SQLite → HTTP-відповідь.\n\n## Зв'язки\n\n- [[REST API]]\n- [[FastAPI]]\n- [[SQLite]]",
+        "Concepts/REST API.md": "---\ntype: concept\ntags:\n  - api\n  - architecture\nstatus: active\n---\n\n# REST API\n\nREST API — це спосіб взаємодії програм через HTTP-запити.\n\nУ проєкті TaskFlow REST API використовується для керування завданнями.\n\n## Основні HTTP-методи\n\n- GET — отримання даних.\n- POST — створення завдання.\n- PATCH — часткове оновлення.\n- DELETE — видалення.\n\n## Зв'язки\n\n- [[FastAPI]]\n- [[TaskFlow Architecture]]",
+        "Decisions/Database Design.md": "---\ntype: decision\ntags:\n  - architecture\n  - database\nstatus: accepted\nrelationships:\n  - type: depends_on\n    target: Components/SQLite.md\n  - type: depends_on\n    target: Components/SQLAlchemy.md\n---\n\n# Database Design\n\n## Контекст\n\nTaskFlow потребує збереження завдань між перезапусками застосунку.\n\n## Прийняте рішення\n\nВикористовувати SQLite як локальну базу даних та SQLAlchemy для взаємодії з нею.\n\n## Обґрунтування\n\n- SQLite не потребує окремого сервера.\n- Спрощує встановлення та тестування.\n- Достатня для навчального застосунку.\n- SQLAlchemy дозволяє відокремити модель даних від HTTP API.\n\n## Обмеження\n\n- Рішення орієнтоване на локальне використання.\n- Міграції схеми бази даних поки не реалізовані.\n- Для масштабного багатокористувацького сервісу може знадобитися інша СУБД.\n\n## Зв'язки\n\n- [[SQLite]]\n- [[SQLAlchemy]]\n- [[TaskFlow Architecture]]",
+        "Components/Pydantic.md": "---\ntype: component\ntags:\n  - backend\n  - validation\nstatus: active\n---\n\n# Pydantic\n\nPydantic — бібліотека Python для опису структур даних та їх валідації.\n\n## Використання в TaskFlow\n\nУ TaskFlow Pydantic перевіряє дані HTTP-запитів і формує структуру відповідей API.\n\nОсновні схеми визначені у файлі app/schemas.py:\n\n- TaskCreate — створення завдання.\n- TaskUpdate — часткове оновлення завдання.\n- TaskResponse — відповідь API.\n\n## Валідація\n\n- Перевірка обов'язкових полів.\n- Контроль допустимих статусів і пріоритетів.\n- Відхилення некоректних значень.\n- Формування помилки HTTP 422.\n\n## Зв'язки\n\n- [[FastAPI]]\n- [[REST API]]\n- [[TaskFlow Architecture]]"
+      }
+    },
+    {
+      "query": "Як перевіряються вхідні дані?",
+      "gold": "Components/Pydantic.md",
+      "paths": [
+        "Concepts/Git Ingestion Verification.md",
+        "Components/SQLAlchemy.md",
+        "Concepts/PR3 Ingestion Test.md",
+        "Decisions/ADR-001-request-validation.md",
+        "Decisions/TaskFlow Commit 48a0c766b8bf3ed3e306cef2b211de57f8d09601.md"
+      ],
+      "rank": null,
+      "seconds": 0.1373347000044305,
+      "sources": {
+        "Concepts/Git Ingestion Verification.md": "# Git Ingestion Verification\n\nConfirmed the PR3 Git integration test.\n",
+        "Components/SQLAlchemy.md": "---\ntype: component\ntags:\n  - database\n  - backend\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/SQLite.md\n---\n\n# SQLAlchemy\n\nSQLAlchemy — бібліотека Python для роботи з реляційними базами даних.\n\nУ TaskFlow використовується ORM-підхід: записи бази даних представлені об'єктами Python.\n\n## Реалізація в TaskFlow\n\n- app/database.py — підключення до SQLite та керування сесіями.\n- app/models.py — ORM-модель Task.\n- app/tasks.py — операції з даними через сесії SQLAlchemy.\n\n## Основні можливості\n\n- Створення та читання записів.\n- Оновлення й видалення завдань.\n- Керування транзакціями.\n- Перевірка обмежень на рівні бази даних.\n\n## Зв'язки\n\n- [[SQLite]]\n- [[Database Design]]\n- [[TaskFlow Architecture]]",
+        "Concepts/PR3 Ingestion Test.md": "Перевірка ідемпотентності MCP для ПР3",
+        "Decisions/ADR-001-request-validation.md": "---\ntype: decision\nstatus: proposed\ntags: [architecture, taskflow]\nrelationships:\n  - type: depends_on\n    target: Components/Pydantic.md\n  - type: related_to\n    target: Concepts/TaskFlow Architecture.md\n---\n\n# ADR-001: Валідація HTTP-запитів через Pydantic\n\nДата: 2026-11-10.\n\n## Контекст\n\nTaskFlow приймає POST і PATCH завдань. Потрібно відрізняти пропущене поле PATCH від явного null та відхиляти невідомі поля.\n\n## Рішення\n\nЗафіксувати наявний підхід: окремі TaskCreate/TaskUpdate у `app/schemas.py`, `extra='forbid'`, Literal для статусу й пріоритету та перевірка явного null через model_fields_set. Маршрут застосовує model_dump(exclude_unset=True). Це пропозиція документування наявної поведінки; функціональність не змінюється.\n\n## Альтернативи\n\n- Ручна валідація словників у маршрутах: дублює перевірки й ускладнює контракт.\n- Єдина схема POST/PATCH: потребує додаткової логіки обов'язковості полів.\n- Дозволити довільні поля: приховує помилки клієнтів.\n\n## Наслідки\n\nПозитивні: єдиний контракт валідації, HTTP 422, передбачуваний PATCH. Негативні: залежність від семантики Pydantic; зміни схем потребують перевірки сумісності. Міграції БД та авторизація цим рішенням не реалізуються.\n\n## Перевірка\n\nНаявні `tests/test_tasks.py`: test_task_crud, test_invalid_input, test_create_requires_title. Фактичний запуск і його результат наведено у `docs/skills-evaluation.md` репозиторію TaskFlow.\n\n## Джерела\n\nMCP: `Concepts/TaskFlow Architecture.md`, `Components/Pydantic.md`. Код: `app/schemas.py`, `app/tasks.py`.\n",
+        "Decisions/TaskFlow Commit 48a0c766b8bf3ed3e306cef2b211de57f8d09601.md": "---\ntype: decision\n---\n# Implement MCP integrations for TaskFlow\n\nCommit: `48a0c766b8bf3ed3e306cef2b211de57f8d09601`\nMessage: Implement MCP integrations for TaskFlow\nSource: https://github.com/ImDanIch/TaskFlow/commit/48a0c766b8bf3ed3e306cef2b211de57f8d09601\n\n## Changed files\n\n- `README.md` (modified)\n- `mcp_server/README.md` (added)\n- `mcp_server/__init__.py` (added)\n- `mcp_server/requirements.txt` (added)\n- `mcp_server/server.py` (added)\n- `mcp_server/vault.py` (added)\n- `tests/test_mcp_stdio.py` (added)\n- `tests/test_mcp_vault.py` (added)\n\n## Summary\n\nAdds a local stdio MCP server exposing search_notes, get_note, and ingest_note for a configured Markdown vault. Implements vault path checks, adds vault and stdio integration tests, and documents setup and verified MCP usage.\n"
+      }
+    },
+    {
+      "query": "Чому обрано файлову базу даних?",
+      "gold": "Decisions/Database Design.md",
+      "paths": [
+        "Decisions/Database Design.md",
+        "Components/SQLAlchemy.md",
+        "Components/SQLite.md",
+        "Concepts/TaskFlow Architecture.md",
+        "Decisions/ADR-001-request-validation.md"
+      ],
+      "rank": 1,
+      "seconds": 0.13949760000105016,
+      "sources": {
+        "Decisions/Database Design.md": "---\ntype: decision\ntags:\n  - architecture\n  - database\nstatus: accepted\nrelationships:\n  - type: depends_on\n    target: Components/SQLite.md\n  - type: depends_on\n    target: Components/SQLAlchemy.md\n---\n\n# Database Design\n\n## Контекст\n\nTaskFlow потребує збереження завдань між перезапусками застосунку.\n\n## Прийняте рішення\n\nВикористовувати SQLite як локальну базу даних та SQLAlchemy для взаємодії з нею.\n\n## Обґрунтування\n\n- SQLite не потребує окремого сервера.\n- Спрощує встановлення та тестування.\n- Достатня для навчального застосунку.\n- SQLAlchemy дозволяє відокремити модель даних від HTTP API.\n\n## Обмеження\n\n- Рішення орієнтоване на локальне використання.\n- Міграції схеми бази даних поки не реалізовані.\n- Для масштабного багатокористувацького сервісу може знадобитися інша СУБД.\n\n## Зв'язки\n\n- [[SQLite]]\n- [[SQLAlchemy]]\n- [[TaskFlow Architecture]]",
+        "Components/SQLAlchemy.md": "---\ntype: component\ntags:\n  - database\n  - backend\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/SQLite.md\n---\n\n# SQLAlchemy\n\nSQLAlchemy — бібліотека Python для роботи з реляційними базами даних.\n\nУ TaskFlow використовується ORM-підхід: записи бази даних представлені об'єктами Python.\n\n## Реалізація в TaskFlow\n\n- app/database.py — підключення до SQLite та керування сесіями.\n- app/models.py — ORM-модель Task.\n- app/tasks.py — операції з даними через сесії SQLAlchemy.\n\n## Основні можливості\n\n- Створення та читання записів.\n- Оновлення й видалення завдань.\n- Керування транзакціями.\n- Перевірка обмежень на рівні бази даних.\n\n## Зв'язки\n\n- [[SQLite]]\n- [[Database Design]]\n- [[TaskFlow Architecture]]",
+        "Components/SQLite.md": "---\ntype: component\ntags:\n  - database\n  - storage\nstatus: active\n---\n\n# SQLite\n\nSQLite — легка реляційна система керування базами даних, яка зберігає інформацію у локальному файлі.\n\n## Використання в TaskFlow\n\nУ TaskFlow SQLite зберігає завдання користувача у файлі taskflow.db.\n\nВзаємодія з базою даних здійснюється через SQLAlchemy.\n\n## Основні особливості\n\n- Не потребує окремого сервера бази даних.\n- Зберігає дані між перезапусками застосунку.\n- Підходить для невеликих локальних проєктів.\n- Підтримує транзакції та обмеження цілісності.\n\n## Зв'язки\n\n- [[TaskFlow Architecture]]\n- [[SQLAlchemy]]\n- [[Database Design]]",
+        "Concepts/TaskFlow Architecture.md": "---\ntype: concept\ntags:\n  - architecture\n  - taskflow\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/FastAPI.md\n  - type: uses\n    target: Components/Pydantic.md\n  - type: uses\n    target: Components/SQLAlchemy.md\n  - type: uses\n    target: Components/SQLite.md\n  - type: implements\n    target: Concepts/REST API.md\n---\n\n# TaskFlow Architecture\n\nTaskFlow — навчальний застосунок для керування завданнями, побудований за принципами REST API.\n\n## Основні компоненти\n\n- FastAPI — обробка HTTP-запитів.\n- Pydantic — валідація даних.\n- SQLAlchemy — робота з базою даних.\n- SQLite — збереження завдань.\n- pytest — автоматизоване тестування.\n\n## Потік обробки запиту\n\nHTTP-запит → FastAPI → Pydantic → SQLAlchemy → SQLite → HTTP-відповідь.\n\n## Зв'язки\n\n- [[REST API]]\n- [[FastAPI]]\n- [[SQLite]]",
+        "Decisions/ADR-001-request-validation.md": "---\ntype: decision\nstatus: proposed\ntags: [architecture, taskflow]\nrelationships:\n  - type: depends_on\n    target: Components/Pydantic.md\n  - type: related_to\n    target: Concepts/TaskFlow Architecture.md\n---\n\n# ADR-001: Валідація HTTP-запитів через Pydantic\n\nДата: 2026-11-10.\n\n## Контекст\n\nTaskFlow приймає POST і PATCH завдань. Потрібно відрізняти пропущене поле PATCH від явного null та відхиляти невідомі поля.\n\n## Рішення\n\nЗафіксувати наявний підхід: окремі TaskCreate/TaskUpdate у `app/schemas.py`, `extra='forbid'`, Literal для статусу й пріоритету та перевірка явного null через model_fields_set. Маршрут застосовує model_dump(exclude_unset=True). Це пропозиція документування наявної поведінки; функціональність не змінюється.\n\n## Альтернативи\n\n- Ручна валідація словників у маршрутах: дублює перевірки й ускладнює контракт.\n- Єдина схема POST/PATCH: потребує додаткової логіки обов'язковості полів.\n- Дозволити довільні поля: приховує помилки клієнтів.\n\n## Наслідки\n\nПозитивні: єдиний контракт валідації, HTTP 422, передбачуваний PATCH. Негативні: залежність від семантики Pydantic; зміни схем потребують перевірки сумісності. Міграції БД та авторизація цим рішенням не реалізуються.\n\n## Перевірка\n\nНаявні `tests/test_tasks.py`: test_task_crud, test_invalid_input, test_create_requires_title. Фактичний запуск і його результат наведено у `docs/skills-evaluation.md` репозиторію TaskFlow.\n\n## Джерела\n\nMCP: `Concepts/TaskFlow Architecture.md`, `Components/Pydantic.md`. Код: `app/schemas.py`, `app/tasks.py`.\n"
+      }
+    },
+    {
+      "query": "Як Python працює з таблицями через ORM?",
+      "gold": "Components/SQLAlchemy.md",
+      "paths": [
+        "Components/SQLAlchemy.md",
+        "Concepts/TaskFlow Architecture.md",
+        "TaskFlow MOC.md",
+        "Components/Pydantic.md",
+        "Components/FastAPI.md"
+      ],
+      "rank": 1,
+      "seconds": 0.15038579999963986,
+      "sources": {
+        "Components/SQLAlchemy.md": "---\ntype: component\ntags:\n  - database\n  - backend\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/SQLite.md\n---\n\n# SQLAlchemy\n\nSQLAlchemy — бібліотека Python для роботи з реляційними базами даних.\n\nУ TaskFlow використовується ORM-підхід: записи бази даних представлені об'єктами Python.\n\n## Реалізація в TaskFlow\n\n- app/database.py — підключення до SQLite та керування сесіями.\n- app/models.py — ORM-модель Task.\n- app/tasks.py — операції з даними через сесії SQLAlchemy.\n\n## Основні можливості\n\n- Створення та читання записів.\n- Оновлення й видалення завдань.\n- Керування транзакціями.\n- Перевірка обмежень на рівні бази даних.\n\n## Зв'язки\n\n- [[SQLite]]\n- [[Database Design]]\n- [[TaskFlow Architecture]]",
+        "Concepts/TaskFlow Architecture.md": "---\ntype: concept\ntags:\n  - architecture\n  - taskflow\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/FastAPI.md\n  - type: uses\n    target: Components/Pydantic.md\n  - type: uses\n    target: Components/SQLAlchemy.md\n  - type: uses\n    target: Components/SQLite.md\n  - type: implements\n    target: Concepts/REST API.md\n---\n\n# TaskFlow Architecture\n\nTaskFlow — навчальний застосунок для керування завданнями, побудований за принципами REST API.\n\n## Основні компоненти\n\n- FastAPI — обробка HTTP-запитів.\n- Pydantic — валідація даних.\n- SQLAlchemy — робота з базою даних.\n- SQLite — збереження завдань.\n- pytest — автоматизоване тестування.\n\n## Потік обробки запиту\n\nHTTP-запит → FastAPI → Pydantic → SQLAlchemy → SQLite → HTTP-відповідь.\n\n## Зв'язки\n\n- [[REST API]]\n- [[FastAPI]]\n- [[SQLite]]",
+        "TaskFlow MOC.md": "---\ntype: moc\ntags:\n  - navigation\n  - taskflow\nstatus: active\n---\n\n# TaskFlow — Map of Content\n\nГоловна навігаційна сторінка бази знань навчального проєкту TaskFlow.\n\n## Основні поняття (Concepts)\n\n- [[REST API]]\n- [[TaskFlow Architecture]]\n- [[MCP Integration Test]]\n\n## Компоненти (Components)\n\n- [[FastAPI]]\n- [[SQLite]]\n- [[SQLAlchemy]]\n- [[Pydantic]]\n\n## Архітектурні рішення (Decisions)\n\n- [[Database Design]]\n\n## Глосарій (Glossary)\n\n- [[CRUD]]\n\n## Призначення бази знань\n\nБаза знань TaskFlow використовується для документування архітектури, технологій, термінів і рішень проєкту.\n\nУ наступних практичних роботах її планується інтегрувати з AI-агентом через MCP та механізми пошуку знань.",
+        "Components/Pydantic.md": "---\ntype: component\ntags:\n  - backend\n  - validation\nstatus: active\n---\n\n# Pydantic\n\nPydantic — бібліотека Python для опису структур даних та їх валідації.\n\n## Використання в TaskFlow\n\nУ TaskFlow Pydantic перевіряє дані HTTP-запитів і формує структуру відповідей API.\n\nОсновні схеми визначені у файлі app/schemas.py:\n\n- TaskCreate — створення завдання.\n- TaskUpdate — часткове оновлення завдання.\n- TaskResponse — відповідь API.\n\n## Валідація\n\n- Перевірка обов'язкових полів.\n- Контроль допустимих статусів і пріоритетів.\n- Відхилення некоректних значень.\n- Формування помилки HTTP 422.\n\n## Зв'язки\n\n- [[FastAPI]]\n- [[REST API]]\n- [[TaskFlow Architecture]]",
+        "Components/FastAPI.md": "---\ntype: component\ntags:\n  - backend\n  - api\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/Pydantic.md\n---\n\n# FastAPI\n\nFastAPI — Python-фреймворк для створення веб-API.\n\nУ TaskFlow використовується для реалізації HTTP-маршрутів і автоматичної документації Swagger.\n\n## Реалізація в TaskFlow\n\n- app/main.py — створення застосунку та підключення маршрутів.\n- app/tasks.py — операції CRUD.\n- app/schemas.py — Pydantic-схеми запитів і відповідей.\n\n## Зв'язки\n\n- [[REST API]]\n- [[TaskFlow Architecture]]"
+      }
+    },
+    {
+      "query": "Де зберігаються завдання без окремого сервера?",
+      "gold": "Components/SQLite.md",
+      "paths": [
+        "Components/SQLite.md",
+        "Concepts/REST API.md",
+        "Components/FastAPI.md",
+        "Components/SQLAlchemy.md",
+        "Concepts/TaskFlow Architecture.md"
+      ],
+      "rank": 1,
+      "seconds": 0.14854159999958938,
+      "sources": {
+        "Components/SQLite.md": "---\ntype: component\ntags:\n  - database\n  - storage\nstatus: active\n---\n\n# SQLite\n\nSQLite — легка реляційна система керування базами даних, яка зберігає інформацію у локальному файлі.\n\n## Використання в TaskFlow\n\nУ TaskFlow SQLite зберігає завдання користувача у файлі taskflow.db.\n\nВзаємодія з базою даних здійснюється через SQLAlchemy.\n\n## Основні особливості\n\n- Не потребує окремого сервера бази даних.\n- Зберігає дані між перезапусками застосунку.\n- Підходить для невеликих локальних проєктів.\n- Підтримує транзакції та обмеження цілісності.\n\n## Зв'язки\n\n- [[TaskFlow Architecture]]\n- [[SQLAlchemy]]\n- [[Database Design]]",
+        "Concepts/REST API.md": "---\ntype: concept\ntags:\n  - api\n  - architecture\nstatus: active\n---\n\n# REST API\n\nREST API — це спосіб взаємодії програм через HTTP-запити.\n\nУ проєкті TaskFlow REST API використовується для керування завданнями.\n\n## Основні HTTP-методи\n\n- GET — отримання даних.\n- POST — створення завдання.\n- PATCH — часткове оновлення.\n- DELETE — видалення.\n\n## Зв'язки\n\n- [[FastAPI]]\n- [[TaskFlow Architecture]]",
+        "Components/FastAPI.md": "---\ntype: component\ntags:\n  - backend\n  - api\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/Pydantic.md\n---\n\n# FastAPI\n\nFastAPI — Python-фреймворк для створення веб-API.\n\nУ TaskFlow використовується для реалізації HTTP-маршрутів і автоматичної документації Swagger.\n\n## Реалізація в TaskFlow\n\n- app/main.py — створення застосунку та підключення маршрутів.\n- app/tasks.py — операції CRUD.\n- app/schemas.py — Pydantic-схеми запитів і відповідей.\n\n## Зв'язки\n\n- [[REST API]]\n- [[TaskFlow Architecture]]",
+        "Components/SQLAlchemy.md": "---\ntype: component\ntags:\n  - database\n  - backend\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/SQLite.md\n---\n\n# SQLAlchemy\n\nSQLAlchemy — бібліотека Python для роботи з реляційними базами даних.\n\nУ TaskFlow використовується ORM-підхід: записи бази даних представлені об'єктами Python.\n\n## Реалізація в TaskFlow\n\n- app/database.py — підключення до SQLite та керування сесіями.\n- app/models.py — ORM-модель Task.\n- app/tasks.py — операції з даними через сесії SQLAlchemy.\n\n## Основні можливості\n\n- Створення та читання записів.\n- Оновлення й видалення завдань.\n- Керування транзакціями.\n- Перевірка обмежень на рівні бази даних.\n\n## Зв'язки\n\n- [[SQLite]]\n- [[Database Design]]\n- [[TaskFlow Architecture]]",
+        "Concepts/TaskFlow Architecture.md": "---\ntype: concept\ntags:\n  - architecture\n  - taskflow\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/FastAPI.md\n  - type: uses\n    target: Components/Pydantic.md\n  - type: uses\n    target: Components/SQLAlchemy.md\n  - type: uses\n    target: Components/SQLite.md\n  - type: implements\n    target: Concepts/REST API.md\n---\n\n# TaskFlow Architecture\n\nTaskFlow — навчальний застосунок для керування завданнями, побудований за принципами REST API.\n\n## Основні компоненти\n\n- FastAPI — обробка HTTP-запитів.\n- Pydantic — валідація даних.\n- SQLAlchemy — робота з базою даних.\n- SQLite — збереження завдань.\n- pytest — автоматизоване тестування.\n\n## Потік обробки запиту\n\nHTTP-запит → FastAPI → Pydantic → SQLAlchemy → SQLite → HTTP-відповідь.\n\n## Зв'язки\n\n- [[REST API]]\n- [[FastAPI]]\n- [[SQLite]]"
+      }
+    },
+    {
+      "query": "Як компоненти застосунку взаємодіють між собою?",
+      "gold": "Concepts/TaskFlow Architecture.md",
+      "paths": [
+        "Concepts/TaskFlow Architecture.md",
+        "TaskFlow MOC.md",
+        "Components/SQLAlchemy.md",
+        "Templates/Component Template.md",
+        "Components/FastAPI.md"
+      ],
+      "rank": 1,
+      "seconds": 0.1435332000037306,
+      "sources": {
+        "Concepts/TaskFlow Architecture.md": "---\ntype: concept\ntags:\n  - architecture\n  - taskflow\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/FastAPI.md\n  - type: uses\n    target: Components/Pydantic.md\n  - type: uses\n    target: Components/SQLAlchemy.md\n  - type: uses\n    target: Components/SQLite.md\n  - type: implements\n    target: Concepts/REST API.md\n---\n\n# TaskFlow Architecture\n\nTaskFlow — навчальний застосунок для керування завданнями, побудований за принципами REST API.\n\n## Основні компоненти\n\n- FastAPI — обробка HTTP-запитів.\n- Pydantic — валідація даних.\n- SQLAlchemy — робота з базою даних.\n- SQLite — збереження завдань.\n- pytest — автоматизоване тестування.\n\n## Потік обробки запиту\n\nHTTP-запит → FastAPI → Pydantic → SQLAlchemy → SQLite → HTTP-відповідь.\n\n## Зв'язки\n\n- [[REST API]]\n- [[FastAPI]]\n- [[SQLite]]",
+        "TaskFlow MOC.md": "---\ntype: moc\ntags:\n  - navigation\n  - taskflow\nstatus: active\n---\n\n# TaskFlow — Map of Content\n\nГоловна навігаційна сторінка бази знань навчального проєкту TaskFlow.\n\n## Основні поняття (Concepts)\n\n- [[REST API]]\n- [[TaskFlow Architecture]]\n- [[MCP Integration Test]]\n\n## Компоненти (Components)\n\n- [[FastAPI]]\n- [[SQLite]]\n- [[SQLAlchemy]]\n- [[Pydantic]]\n\n## Архітектурні рішення (Decisions)\n\n- [[Database Design]]\n\n## Глосарій (Glossary)\n\n- [[CRUD]]\n\n## Призначення бази знань\n\nБаза знань TaskFlow використовується для документування архітектури, технологій, термінів і рішень проєкту.\n\nУ наступних практичних роботах її планується інтегрувати з AI-агентом через MCP та механізми пошуку знань.",
+        "Components/SQLAlchemy.md": "---\ntype: component\ntags:\n  - database\n  - backend\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/SQLite.md\n---\n\n# SQLAlchemy\n\nSQLAlchemy — бібліотека Python для роботи з реляційними базами даних.\n\nУ TaskFlow використовується ORM-підхід: записи бази даних представлені об'єктами Python.\n\n## Реалізація в TaskFlow\n\n- app/database.py — підключення до SQLite та керування сесіями.\n- app/models.py — ORM-модель Task.\n- app/tasks.py — операції з даними через сесії SQLAlchemy.\n\n## Основні можливості\n\n- Створення та читання записів.\n- Оновлення й видалення завдань.\n- Керування транзакціями.\n- Перевірка обмежень на рівні бази даних.\n\n## Зв'язки\n\n- [[SQLite]]\n- [[Database Design]]\n- [[TaskFlow Architecture]]",
+        "Templates/Component Template.md": "---\ntype: component\ntags:\n  - component\nstatus: active\nrelationships: []\n---\n\n# {{title}}\n\n## Purpose\n\n## Implementation in TaskFlow\n\n## Related notes\n",
+        "Components/FastAPI.md": "---\ntype: component\ntags:\n  - backend\n  - api\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/Pydantic.md\n---\n\n# FastAPI\n\nFastAPI — Python-фреймворк для створення веб-API.\n\nУ TaskFlow використовується для реалізації HTTP-маршрутів і автоматичної документації Swagger.\n\n## Реалізація в TaskFlow\n\n- app/main.py — створення застосунку та підключення маршрутів.\n- app/tasks.py — операції CRUD.\n- app/schemas.py — Pydantic-схеми запитів і відповідей.\n\n## Зв'язки\n\n- [[REST API]]\n- [[TaskFlow Architecture]]"
+      }
+    },
+    {
+      "query": "Які операції доступні через REST?",
+      "gold": "Concepts/REST API.md",
+      "paths": [
+        "Concepts/REST API.md",
+        "Components/SQLAlchemy.md",
+        "Decisions/ADR-001-request-validation.md",
+        "Components/Pydantic.md",
+        "Concepts/TaskFlow Architecture.md"
+      ],
+      "rank": 1,
+      "seconds": 0.1388883999970858,
+      "sources": {
+        "Concepts/REST API.md": "---\ntype: concept\ntags:\n  - api\n  - architecture\nstatus: active\n---\n\n# REST API\n\nREST API — це спосіб взаємодії програм через HTTP-запити.\n\nУ проєкті TaskFlow REST API використовується для керування завданнями.\n\n## Основні HTTP-методи\n\n- GET — отримання даних.\n- POST — створення завдання.\n- PATCH — часткове оновлення.\n- DELETE — видалення.\n\n## Зв'язки\n\n- [[FastAPI]]\n- [[TaskFlow Architecture]]",
+        "Components/SQLAlchemy.md": "---\ntype: component\ntags:\n  - database\n  - backend\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/SQLite.md\n---\n\n# SQLAlchemy\n\nSQLAlchemy — бібліотека Python для роботи з реляційними базами даних.\n\nУ TaskFlow використовується ORM-підхід: записи бази даних представлені об'єктами Python.\n\n## Реалізація в TaskFlow\n\n- app/database.py — підключення до SQLite та керування сесіями.\n- app/models.py — ORM-модель Task.\n- app/tasks.py — операції з даними через сесії SQLAlchemy.\n\n## Основні можливості\n\n- Створення та читання записів.\n- Оновлення й видалення завдань.\n- Керування транзакціями.\n- Перевірка обмежень на рівні бази даних.\n\n## Зв'язки\n\n- [[SQLite]]\n- [[Database Design]]\n- [[TaskFlow Architecture]]",
+        "Decisions/ADR-001-request-validation.md": "---\ntype: decision\nstatus: proposed\ntags: [architecture, taskflow]\nrelationships:\n  - type: depends_on\n    target: Components/Pydantic.md\n  - type: related_to\n    target: Concepts/TaskFlow Architecture.md\n---\n\n# ADR-001: Валідація HTTP-запитів через Pydantic\n\nДата: 2026-11-10.\n\n## Контекст\n\nTaskFlow приймає POST і PATCH завдань. Потрібно відрізняти пропущене поле PATCH від явного null та відхиляти невідомі поля.\n\n## Рішення\n\nЗафіксувати наявний підхід: окремі TaskCreate/TaskUpdate у `app/schemas.py`, `extra='forbid'`, Literal для статусу й пріоритету та перевірка явного null через model_fields_set. Маршрут застосовує model_dump(exclude_unset=True). Це пропозиція документування наявної поведінки; функціональність не змінюється.\n\n## Альтернативи\n\n- Ручна валідація словників у маршрутах: дублює перевірки й ускладнює контракт.\n- Єдина схема POST/PATCH: потребує додаткової логіки обов'язковості полів.\n- Дозволити довільні поля: приховує помилки клієнтів.\n\n## Наслідки\n\nПозитивні: єдиний контракт валідації, HTTP 422, передбачуваний PATCH. Негативні: залежність від семантики Pydantic; зміни схем потребують перевірки сумісності. Міграції БД та авторизація цим рішенням не реалізуються.\n\n## Перевірка\n\nНаявні `tests/test_tasks.py`: test_task_crud, test_invalid_input, test_create_requires_title. Фактичний запуск і його результат наведено у `docs/skills-evaluation.md` репозиторію TaskFlow.\n\n## Джерела\n\nMCP: `Concepts/TaskFlow Architecture.md`, `Components/Pydantic.md`. Код: `app/schemas.py`, `app/tasks.py`.\n",
+        "Components/Pydantic.md": "---\ntype: component\ntags:\n  - backend\n  - validation\nstatus: active\n---\n\n# Pydantic\n\nPydantic — бібліотека Python для опису структур даних та їх валідації.\n\n## Використання в TaskFlow\n\nУ TaskFlow Pydantic перевіряє дані HTTP-запитів і формує структуру відповідей API.\n\nОсновні схеми визначені у файлі app/schemas.py:\n\n- TaskCreate — створення завдання.\n- TaskUpdate — часткове оновлення завдання.\n- TaskResponse — відповідь API.\n\n## Валідація\n\n- Перевірка обов'язкових полів.\n- Контроль допустимих статусів і пріоритетів.\n- Відхилення некоректних значень.\n- Формування помилки HTTP 422.\n\n## Зв'язки\n\n- [[FastAPI]]\n- [[REST API]]\n- [[TaskFlow Architecture]]",
+        "Concepts/TaskFlow Architecture.md": "---\ntype: concept\ntags:\n  - architecture\n  - taskflow\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/FastAPI.md\n  - type: uses\n    target: Components/Pydantic.md\n  - type: uses\n    target: Components/SQLAlchemy.md\n  - type: uses\n    target: Components/SQLite.md\n  - type: implements\n    target: Concepts/REST API.md\n---\n\n# TaskFlow Architecture\n\nTaskFlow — навчальний застосунок для керування завданнями, побудований за принципами REST API.\n\n## Основні компоненти\n\n- FastAPI — обробка HTTP-запитів.\n- Pydantic — валідація даних.\n- SQLAlchemy — робота з базою даних.\n- SQLite — збереження завдань.\n- pytest — автоматизоване тестування.\n\n## Потік обробки запиту\n\nHTTP-запит → FastAPI → Pydantic → SQLAlchemy → SQLite → HTTP-відповідь.\n\n## Зв'язки\n\n- [[REST API]]\n- [[FastAPI]]\n- [[SQLite]]"
+      }
+    },
+    {
+      "query": "Що означають створення читання зміна видалення?",
+      "gold": "Glossary/CRUD.md",
+      "paths": [
+        "README.md",
+        "Glossary/CRUD.md",
+        "Components/SQLAlchemy.md",
+        "Decisions/ADR-001-request-validation.md",
+        "Decisions/TaskFlow Commit 0fae716a59f9db4f1d647b29235ba5a6777ee013.md"
+      ],
+      "rank": 2,
+      "seconds": 0.14020539999910397,
+      "sources": {
+        "README.md": "# TaskFlow-KB",
+        "Glossary/CRUD.md": "---\ntype: glossary\ntags:\n  - terminology\n  - api\nstatus: active\n---\n\n# CRUD\n\nCRUD — скорочення від Create, Read, Update, Delete.\n\nЦе чотири основні операції керування даними.\n\n## CRUD у TaskFlow\n\n- Create — POST /tasks.\n- Read — GET /tasks та GET /tasks/{task_id}.\n- Update — PATCH /tasks/{task_id}.\n- Delete — DELETE /tasks/{task_id}.\n\n## Зв'язки\n\n- [[REST API]]\n- [[FastAPI]]\n- [[TaskFlow Architecture]]",
+        "Components/SQLAlchemy.md": "---\ntype: component\ntags:\n  - database\n  - backend\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/SQLite.md\n---\n\n# SQLAlchemy\n\nSQLAlchemy — бібліотека Python для роботи з реляційними базами даних.\n\nУ TaskFlow використовується ORM-підхід: записи бази даних представлені об'єктами Python.\n\n## Реалізація в TaskFlow\n\n- app/database.py — підключення до SQLite та керування сесіями.\n- app/models.py — ORM-модель Task.\n- app/tasks.py — операції з даними через сесії SQLAlchemy.\n\n## Основні можливості\n\n- Створення та читання записів.\n- Оновлення й видалення завдань.\n- Керування транзакціями.\n- Перевірка обмежень на рівні бази даних.\n\n## Зв'язки\n\n- [[SQLite]]\n- [[Database Design]]\n- [[TaskFlow Architecture]]",
+        "Decisions/ADR-001-request-validation.md": "---\ntype: decision\nstatus: proposed\ntags: [architecture, taskflow]\nrelationships:\n  - type: depends_on\n    target: Components/Pydantic.md\n  - type: related_to\n    target: Concepts/TaskFlow Architecture.md\n---\n\n# ADR-001: Валідація HTTP-запитів через Pydantic\n\nДата: 2026-11-10.\n\n## Контекст\n\nTaskFlow приймає POST і PATCH завдань. Потрібно відрізняти пропущене поле PATCH від явного null та відхиляти невідомі поля.\n\n## Рішення\n\nЗафіксувати наявний підхід: окремі TaskCreate/TaskUpdate у `app/schemas.py`, `extra='forbid'`, Literal для статусу й пріоритету та перевірка явного null через model_fields_set. Маршрут застосовує model_dump(exclude_unset=True). Це пропозиція документування наявної поведінки; функціональність не змінюється.\n\n## Альтернативи\n\n- Ручна валідація словників у маршрутах: дублює перевірки й ускладнює контракт.\n- Єдина схема POST/PATCH: потребує додаткової логіки обов'язковості полів.\n- Дозволити довільні поля: приховує помилки клієнтів.\n\n## Наслідки\n\nПозитивні: єдиний контракт валідації, HTTP 422, передбачуваний PATCH. Негативні: залежність від семантики Pydantic; зміни схем потребують перевірки сумісності. Міграції БД та авторизація цим рішенням не реалізуються.\n\n## Перевірка\n\nНаявні `tests/test_tasks.py`: test_task_crud, test_invalid_input, test_create_requires_title. Фактичний запуск і його результат наведено у `docs/skills-evaluation.md` репозиторію TaskFlow.\n\n## Джерела\n\nMCP: `Concepts/TaskFlow Architecture.md`, `Components/Pydantic.md`. Код: `app/schemas.py`, `app/tasks.py`.\n",
+        "Decisions/TaskFlow Commit 0fae716a59f9db4f1d647b29235ba5a6777ee013.md": "---\ntype: decision\n---\n# Implement ontology and agent guardrails\n\nCommit: `0fae716a59f9db4f1d647b29235ba5a6777ee013`\nMessage: Implement ontology and agent guardrails\nSource: https://github.com/ImDanIch/TaskFlow/commit/0fae716a59f9db4f1d647b29235ba5a6777ee013\n\n## Changed files\n\n- `.codex/hooks.json` (added)\n- `README.md` (modified)\n- `guardrails/README.md` (added)\n- `guardrails/__init__.py` (added)\n- `guardrails/codex_hook.py` (added)\n- `guardrails/policies.json` (added)\n- `guardrails/policy.py` (added)\n- `ontology/README.md` (added)\n- `ontology/__init__.py` (added)\n- `ontology/definitions.json` (added)\n- `ontology/requirements.txt` (added)\n- `ontology/validator.py` (added)\n- `tests/test_guardrails.py` (added)\n- `tests/test_ontology.py` (added)\n\n## Summary\n\nAdds a TaskFlow-KB ontology with entity and relationship definitions and a read-only Markdown/frontmatter validator. Adds an ordered allow/warn/block policy evaluator, a Codex PreToolUse adapter and hook configuration, documentation, and tests for ontology and guardrails.\n"
+      }
+    },
+    {
+      "query": "Як обробляти некоректний запит?",
+      "gold": "Decisions/ADR-001-request-validation.md",
+      "paths": [
+        "Decisions/ADR-001-request-validation.md",
+        "Decisions/TaskFlow Commit 41e55c2f282589696629896b0c125d7917d991af.md",
+        "Decisions/TaskFlow Commit 48a0c766b8bf3ed3e306cef2b211de57f8d09601.md",
+        "Concepts/TaskFlow Architecture.md",
+        "Components/Pydantic.md"
+      ],
+      "rank": 1,
+      "seconds": 0.13228779999917606,
+      "sources": {
+        "Decisions/ADR-001-request-validation.md": "---\ntype: decision\nstatus: proposed\ntags: [architecture, taskflow]\nrelationships:\n  - type: depends_on\n    target: Components/Pydantic.md\n  - type: related_to\n    target: Concepts/TaskFlow Architecture.md\n---\n\n# ADR-001: Валідація HTTP-запитів через Pydantic\n\nДата: 2026-11-10.\n\n## Контекст\n\nTaskFlow приймає POST і PATCH завдань. Потрібно відрізняти пропущене поле PATCH від явного null та відхиляти невідомі поля.\n\n## Рішення\n\nЗафіксувати наявний підхід: окремі TaskCreate/TaskUpdate у `app/schemas.py`, `extra='forbid'`, Literal для статусу й пріоритету та перевірка явного null через model_fields_set. Маршрут застосовує model_dump(exclude_unset=True). Це пропозиція документування наявної поведінки; функціональність не змінюється.\n\n## Альтернативи\n\n- Ручна валідація словників у маршрутах: дублює перевірки й ускладнює контракт.\n- Єдина схема POST/PATCH: потребує додаткової логіки обов'язковості полів.\n- Дозволити довільні поля: приховує помилки клієнтів.\n\n## Наслідки\n\nПозитивні: єдиний контракт валідації, HTTP 422, передбачуваний PATCH. Негативні: залежність від семантики Pydantic; зміни схем потребують перевірки сумісності. Міграції БД та авторизація цим рішенням не реалізуються.\n\n## Перевірка\n\nНаявні `tests/test_tasks.py`: test_task_crud, test_invalid_input, test_create_requires_title. Фактичний запуск і його результат наведено у `docs/skills-evaluation.md` репозиторію TaskFlow.\n\n## Джерела\n\nMCP: `Concepts/TaskFlow Architecture.md`, `Components/Pydantic.md`. Код: `app/schemas.py`, `app/tasks.py`.\n",
+        "Decisions/TaskFlow Commit 41e55c2f282589696629896b0c125d7917d991af.md": "---\ntype: decision\n---\n# Document TaskFlow requirements and agent harness plan\n\nCommit: `41e55c2f282589696629896b0c125d7917d991af`\nMessage: Document TaskFlow requirements and agent harness plan\nSource: https://github.com/ImDanIch/TaskFlow/commit/41e55c2f282589696629896b0c125d7917d991af\n\n## Changed files\n\n- `README.md` (modified)\n\n## Summary\n\nExpands README.md with the existing task API requirements, validation behavior, architecture, installation and test instructions. Separately documents planned agent harness capabilities, including Git, knowledge-base access, safety controls, reusable skills, and multi-agent workflows.\n",
+        "Decisions/TaskFlow Commit 48a0c766b8bf3ed3e306cef2b211de57f8d09601.md": "---\ntype: decision\n---\n# Implement MCP integrations for TaskFlow\n\nCommit: `48a0c766b8bf3ed3e306cef2b211de57f8d09601`\nMessage: Implement MCP integrations for TaskFlow\nSource: https://github.com/ImDanIch/TaskFlow/commit/48a0c766b8bf3ed3e306cef2b211de57f8d09601\n\n## Changed files\n\n- `README.md` (modified)\n- `mcp_server/README.md` (added)\n- `mcp_server/__init__.py` (added)\n- `mcp_server/requirements.txt` (added)\n- `mcp_server/server.py` (added)\n- `mcp_server/vault.py` (added)\n- `tests/test_mcp_stdio.py` (added)\n- `tests/test_mcp_vault.py` (added)\n\n## Summary\n\nAdds a local stdio MCP server exposing search_notes, get_note, and ingest_note for a configured Markdown vault. Implements vault path checks, adds vault and stdio integration tests, and documents setup and verified MCP usage.\n",
+        "Concepts/TaskFlow Architecture.md": "---\ntype: concept\ntags:\n  - architecture\n  - taskflow\nstatus: active\nrelationships:\n  - type: uses\n    target: Components/FastAPI.md\n  - type: uses\n    target: Components/Pydantic.md\n  - type: uses\n    target: Components/SQLAlchemy.md\n  - type: uses\n    target: Components/SQLite.md\n  - type: implements\n    target: Concepts/REST API.md\n---\n\n# TaskFlow Architecture\n\nTaskFlow — навчальний застосунок для керування завданнями, побудований за принципами REST API.\n\n## Основні компоненти\n\n- FastAPI — обробка HTTP-запитів.\n- Pydantic — валідація даних.\n- SQLAlchemy — робота з базою даних.\n- SQLite — збереження завдань.\n- pytest — автоматизоване тестування.\n\n## Потік обробки запиту\n\nHTTP-запит → FastAPI → Pydantic → SQLAlchemy → SQLite → HTTP-відповідь.\n\n## Зв'язки\n\n- [[REST API]]\n- [[FastAPI]]\n- [[SQLite]]",
+        "Components/Pydantic.md": "---\ntype: component\ntags:\n  - backend\n  - validation\nstatus: active\n---\n\n# Pydantic\n\nPydantic — бібліотека Python для опису структур даних та їх валідації.\n\n## Використання в TaskFlow\n\nУ TaskFlow Pydantic перевіряє дані HTTP-запитів і формує структуру відповідей API.\n\nОсновні схеми визначені у файлі app/schemas.py:\n\n- TaskCreate — створення завдання.\n- TaskUpdate — часткове оновлення завдання.\n- TaskResponse — відповідь API.\n\n## Валідація\n\n- Перевірка обов'язкових полів.\n- Контроль допустимих статусів і пріоритетів.\n- Відхилення некоректних значень.\n- Формування помилки HTTP 422.\n\n## Зв'язки\n\n- [[FastAPI]]\n- [[REST API]]\n- [[TaskFlow Architecture]]"
+      }
+    },
+    {
+      "query": "Як перевірено запис нотаток через Git?",
+      "gold": "Concepts/Git Ingestion Verification.md",
+      "paths": [
+        "Concepts/Git Ingestion Verification.md",
+        "Decisions/TaskFlow Commit 41e55c2f282589696629896b0c125d7917d991af.md",
+        "Decisions/TaskFlow Commit 48a0c766b8bf3ed3e306cef2b211de57f8d09601.md",
+        "Concepts/PR3 Ingestion Test.md",
+        "Concepts/MCP Integration Test.md"
+      ],
+      "rank": 1,
+      "seconds": 0.14697430000524037,
+      "sources": {
+        "Concepts/Git Ingestion Verification.md": "# Git Ingestion Verification\n\nConfirmed the PR3 Git integration test.\n",
+        "Decisions/TaskFlow Commit 41e55c2f282589696629896b0c125d7917d991af.md": "---\ntype: decision\n---\n# Document TaskFlow requirements and agent harness plan\n\nCommit: `41e55c2f282589696629896b0c125d7917d991af`\nMessage: Document TaskFlow requirements and agent harness plan\nSource: https://github.com/ImDanIch/TaskFlow/commit/41e55c2f282589696629896b0c125d7917d991af\n\n## Changed files\n\n- `README.md` (modified)\n\n## Summary\n\nExpands README.md with the existing task API requirements, validation behavior, architecture, installation and test instructions. Separately documents planned agent harness capabilities, including Git, knowledge-base access, safety controls, reusable skills, and multi-agent workflows.\n",
+        "Decisions/TaskFlow Commit 48a0c766b8bf3ed3e306cef2b211de57f8d09601.md": "---\ntype: decision\n---\n# Implement MCP integrations for TaskFlow\n\nCommit: `48a0c766b8bf3ed3e306cef2b211de57f8d09601`\nMessage: Implement MCP integrations for TaskFlow\nSource: https://github.com/ImDanIch/TaskFlow/commit/48a0c766b8bf3ed3e306cef2b211de57f8d09601\n\n## Changed files\n\n- `README.md` (modified)\n- `mcp_server/README.md` (added)\n- `mcp_server/__init__.py` (added)\n- `mcp_server/requirements.txt` (added)\n- `mcp_server/server.py` (added)\n- `mcp_server/vault.py` (added)\n- `tests/test_mcp_stdio.py` (added)\n- `tests/test_mcp_vault.py` (added)\n\n## Summary\n\nAdds a local stdio MCP server exposing search_notes, get_note, and ingest_note for a configured Markdown vault. Implements vault path checks, adds vault and stdio integration tests, and documents setup and verified MCP usage.\n",
+        "Concepts/PR3 Ingestion Test.md": "Перевірка ідемпотентності MCP для ПР3",
+        "Concepts/MCP Integration Test.md": "---\ntype: concept\ntags: [mcp, testing]\nstatus: test\n---\n# MCP Integration Test\n\nThis note was created by Codex using the ingest_note MCP tool."
+      }
+    }
+  ],
+  "hit_at_5": 0.9,
+  "mrr_at_5": 0.85
+}

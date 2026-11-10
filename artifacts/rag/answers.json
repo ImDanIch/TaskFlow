@@ -1,0 +1,12 @@
+[
+  {"id":1,"answer":"HTTP-запити обробляє FastAPI; маршрути завдань визначено в app/tasks.py.","source":"Components/FastAPI.md","score":2},
+  {"id":2,"answer":"Pydantic перевіряє TaskCreate/TaskUpdate: extra='forbid', Literal для статусу і пріоритету, окрема обробка явного null; некоректний запит дає HTTP 422.","source":"Decisions/ADR-001-request-validation.md","score":2},
+  {"id":3,"answer":"SQLite обрано через відсутність окремого сервера, простоту встановлення і тестування та достатність для навчального застосунку.","source":"Decisions/Database Design.md","score":2},
+  {"id":4,"answer":"SQLAlchemy представляє записи об'єктами Python; Task є ORM-моделлю, а сесії керують операціями та транзакціями.","source":"Components/SQLAlchemy.md","score":2},
+  {"id":5,"answer":"Завдання зберігає SQLite у локальному taskflow.db; окремий сервер БД не потрібен.","source":"Components/SQLite.md","score":2},
+  {"id":6,"answer":"Потік запиту: HTTP → FastAPI → Pydantic → SQLAlchemy → SQLite → HTTP-відповідь.","source":"Concepts/TaskFlow Architecture.md","score":2},
+  {"id":7,"answer":"GET отримує дані, POST створює завдання, PATCH частково оновлює, DELETE видаляє.","source":"Concepts/REST API.md","score":2},
+  {"id":8,"answer":"CRUD означає Create, Read, Update, Delete; у TaskFlow це POST, GET, PATCH, DELETE для /tasks.","source":"Glossary/CRUD.md","score":2},
+  {"id":9,"answer":"Вхід перевіряють окремі Pydantic-схеми; невідомі поля та некоректні значення відхиляються з HTTP 422, PATCH розрізняє пропущене поле й null.","source":"Decisions/ADR-001-request-validation.md","score":2},
+  {"id":10,"answer":"Нотатка підтверджує PR3 Git integration test, але не містить команд, статусів або хешів, тому деталей перевірки з цього джерела встановити неможливо.","source":"Concepts/Git Ingestion Verification.md","score":1}
+]

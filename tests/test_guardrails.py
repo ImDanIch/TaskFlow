@@ -113,6 +113,24 @@ def test_other_tools_unaffected(evaluator):
     assert evaluate_hook({"hook_event_name": "PreToolUse", "tool_name": "Bash"}, evaluator) == {}
 
 
+@pytest.mark.parametrize("query,allowed", [("database", True), ("сховище", True),
+                                          ("", False), ("  ", False), (None, False), (7, False)])
+def test_search_hook_query(evaluator, query, allowed):
+    output = evaluate_hook({
+        "hook_event_name": "PreToolUse", "tool_name": "mcp__taskflow_kb__search_notes",
+        "tool_input": {"query": query},
+    }, evaluator)["hookSpecificOutput"]
+    assert (output.get("permissionDecision") != "deny") is allowed
+
+
+def test_unknown_kb_tool_remains_blocked(evaluator):
+    output = evaluate_hook({
+        "hook_event_name": "PreToolUse", "tool_name": "mcp__taskflow_kb__delete_note",
+        "tool_input": {"query": "database"},
+    }, evaluator)["hookSpecificOutput"]
+    assert output["permissionDecision"] == "deny"
+
+
 @pytest.mark.parametrize("argument_name,reason", [
     ("path", "A nonempty note path is required."),
     ("note_path", "Invalid or ambiguous path."),

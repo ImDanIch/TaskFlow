@@ -1,0 +1,12 @@
+[
+  {"query":"Який вебфреймворк обробляє HTTP-запити?","gold":"Components/FastAPI.md"},
+  {"query":"Як перевіряються вхідні дані?","gold":"Components/Pydantic.md"},
+  {"query":"Чому обрано файлову базу даних?","gold":"Decisions/Database Design.md"},
+  {"query":"Як Python працює з таблицями через ORM?","gold":"Components/SQLAlchemy.md"},
+  {"query":"Де зберігаються завдання без окремого сервера?","gold":"Components/SQLite.md"},
+  {"query":"Як компоненти застосунку взаємодіють між собою?","gold":"Concepts/TaskFlow Architecture.md"},
+  {"query":"Які операції доступні через REST?","gold":"Concepts/REST API.md"},
+  {"query":"Що означають створення читання зміна видалення?","gold":"Glossary/CRUD.md"},
+  {"query":"Як обробляти некоректний запит?","gold":"Decisions/ADR-001-request-validation.md"},
+  {"query":"Як перевірено запис нотаток через Git?","gold":"Concepts/Git Ingestion Verification.md"}
+]

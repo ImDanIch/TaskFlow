@@ -22,7 +22,7 @@ def create_server(vault_path: Path) -> FastMCP:
 
     @server.tool(annotations=ToolAnnotations(readOnlyHint=True))
     def search_notes(query: str) -> list[str]:
-        """Find notes by case-insensitive filename or content substring; return relative paths."""
+        """Rank up to five policy-allowed Markdown notes by semantic similarity; return relative paths."""
         return vault.search_notes(query)
 
     @server.tool(annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True))
@@ -34,6 +34,8 @@ def create_server(vault_path: Path) -> FastMCP:
 
 
 def main() -> None:
+    # Windows heavy imports must finish on the main thread before tool workers.
+    import sentence_transformers
     default = Path(__file__).resolve().parents[2] / "TaskFlow-KB"
     server = create_server(Path(os.environ.get("TASKFLOW_KB_PATH", str(default))))
     server.run(transport="stdio")
