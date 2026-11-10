@@ -96,3 +96,59 @@ def test_invalid_filters(client, params):
 def test_invalid_id(client, method):
     kwargs = {"json": {}} if method == "patch" else {}
     assert getattr(client, method)("/tasks/not-an-id", **kwargs).status_code == 422
+
+
+@pytest.mark.parametrize("params,expected_indexes", [
+    ({}, [0, 1, 2, 3]),
+    ({"limit": 2}, [0, 1]),
+    ({"offset": 1}, [1, 2, 3]),
+    ({"offset": 1, "limit": 2}, [1, 2]),
+    ({"limit": 1}, [0]),
+    ({"limit": 100}, [0, 1, 2, 3]),
+    ({"offset": 4, "limit": 2}, []),
+    ({"offset": 100}, []),
+    ({"offset": 2**63 - 1}, []),
+])
+def test_pagination(client, params, expected_indexes):
+    tasks = []
+    for title in ["D", "B", "A", "C"]:
+        response = client.post("/tasks", json={"title": title})
+        assert response.status_code == 201
+        tasks.append(response.json())
+    response = client.get("/tasks", params=params)
+    assert response.status_code == 200
+    assert response.json() == [tasks[index] for index in expected_indexes]
+
+
+@pytest.mark.parametrize("params", [
+    {"limit": 0}, {"limit": -1}, {"limit": 101}, {"limit": "abc"},
+    {"limit": "1.5"}, {"offset": -1}, {"offset": "abc"}, {"offset": "1.5"},
+    {"offset": 2**63}, {"offset": 10**100},
+])
+def test_invalid_pagination(client, params):
+    assert client.get("/tasks", params=params).status_code == 422
+
+
+def test_pagination_empty_list(client):
+    response = client.get("/tasks", params={"offset": 1, "limit": 1})
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_pagination_applies_after_both_filters(client):
+    tasks = []
+    for title, status, priority in [
+        ("A", "done", "high"), ("B", "todo", "high"),
+        ("C", "todo", "low"), ("D", "todo", "high"),
+        ("E", "todo", "high"),
+    ]:
+        response = client.post("/tasks", json={
+            "title": title, "status": status, "priority": priority,
+        })
+        assert response.status_code == 201
+        tasks.append(response.json())
+    response = client.get("/tasks", params={
+        "status": "todo", "priority": "high", "offset": 1, "limit": 1,
+    })
+    assert response.status_code == 200
+    assert response.json() == [tasks[3]]

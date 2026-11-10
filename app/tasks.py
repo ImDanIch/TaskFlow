@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -34,12 +34,17 @@ def list_tasks(
     session: DatabaseSession,
     status: TaskStatus | None = None,
     priority: TaskPriority | None = None,
+    offset: Annotated[int, Query(ge=0, le=2**63 - 1)] = 0,
+    limit: Annotated[int | None, Query(ge=1, le=100)] = None,
 ):
     query = select(Task).order_by(Task.id)
     if status is not None:
         query = query.where(Task.status == status)
     if priority is not None:
         query = query.where(Task.priority == priority)
+    query = query.offset(offset)
+    if limit is not None:
+        query = query.limit(limit)
     return session.scalars(query).all()
 
 
